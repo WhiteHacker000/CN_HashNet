@@ -42,12 +42,12 @@ A two-phase, fully local networking project demonstrating DNS resolution, TLS te
 
 Connect all 4 Macs to the **same Wi-Fi or mobile hotspot**. Find each IP using `ipconfig getifaddr en0` or `ifconfig | grep inet`.
 
-| Machine | Hostname / Role | Private IPv4 Address | Port(s) Exposed | MAC Address |
-| :--- | :--- | :--- | :--- | :--- |
-| **Mac 1** | `dns-primary.team1.test` | `192.168.x.x` | UDP/TCP 53 | `xx:xx:xx:xx:xx:xx` |
-| **Mac 2** | `app.team1.test` / `api.team1.test` | `192.168.x.x` | TCP 443 (or 8443) | `xx:xx:xx:xx:xx:xx` |
-| **Mac 3** | `backend-a.team1.test` | `192.168.x.x` | TCP 3001 | `xx:xx:xx:xx:xx:xx` |
-| **Mac 4** | `backend-b.team1.test` | `192.168.x.x` | TCP 3002, UDP 53 (Phase 2)| `xx:xx:xx:xx:xx:xx` |
+| Machine | Hostname / Role | Private IPv4 Address | Subnet / Gateway | Interface | MAC Address | Exposed Ports |
+| :--- | :--- | :--- | :--- | :--- | :--- | :--- |
+| **Mac 1** | `dns-primary.team1.test` | `10.7.21.208` | `255.255.224.0` / `10.7.0.1` | `en0` | `10:9f:41:be:e0:72` | UDP/TCP 53 |
+| **Mac 2** | `app.team1.test` / `api.team1.test` | `Pending` | `255.255.224.0` / `10.7.0.1` | `en0` | `Pending` | TCP 443 (8443) |
+| **Mac 3** | `backend-a.team1.test` | `Pending` | `255.255.224.0` / `10.7.0.1` | `en0` | `Pending` | TCP 3001 |
+| **Mac 4** | `backend-b.team1.test` | `Pending` | `255.255.224.0` / `10.7.0.1` | `en0` | `Pending` | TCP 3002, UDP 53 |
 
 ---
 
