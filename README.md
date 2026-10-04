@@ -45,9 +45,9 @@ Connect all 4 Macs to the **same Wi-Fi or mobile hotspot**. Find each IP using `
 | Machine | Hostname / Role | Private IPv4 Address | Subnet / Gateway | Interface | MAC Address | Exposed Ports |
 | :--- | :--- | :--- | :--- | :--- | :--- | :--- |
 | **DNS** | `dns-primary.team1.test` | `10.7.21.208` | `255.255.224.0` / `10.7.0.1` | `en0` | `10:9f:41:be:e0:72` | UDP/TCP 53 |
-| **BACKEND A** | `app.team1.test` / `api.team1.test` | `Pending` | `255.255.224.0` / `10.7.0.1` | `en0` | `Pending` | TCP 443 (8443) |
-| **BACKEND B** | `backend-a.team1.test` | `Pending` | `255.255.224.0` / `10.7.0.1` | `en0` | `Pending` | TCP 3001 |
-| **EDGE** | `backend-b.team1.test` | `Pending` | `255.255.224.0` / `10.7.0.1` | `en0` | `Pending` | TCP 3002, UDP 53 |
+| **EDGE** | `app.team1.test` / `api.team1.test` | `10.7.9.142` | `255.255.224.0` / `10.7.0.1` | `en0` | `10:9f:41:ba:34:c0` | TCP 443 (8443) |
+| **BACKEND A** | `backend-a.team1.test` | `Pending` | `255.255.224.0` / `10.7.0.1` | `en0` | `Pending` | TCP 3001 |
+| **BACKEND B** | `backend-b.team1.test` | `Pending` | `255.255.224.0` / `10.7.0.1` | `en0` | `Pending` | TCP 3002, UDP 53 |
 
 ---
 
