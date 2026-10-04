@@ -47,7 +47,7 @@ Connect all 4 Macs to the **same Wi-Fi or mobile hotspot**. Find each IP using `
 | **DNS** | `dns-primary.team1.test` | `10.7.21.208` | `255.255.224.0` / `10.7.0.1` | `en0` | `10:9f:41:be:e0:72` | UDP/TCP 53 |
 | **EDGE** | `app.team1.test` / `api.team1.test` | `10.7.9.142` | `255.255.224.0` / `10.7.0.1` | `en0` | `10:9f:41:ba:34:c0` | TCP 443 (8443) |
 | **BACKEND A** | `backend-a.team1.test` | `Pending` | `255.255.224.0` / `10.7.0.1` | `en0` | `Pending` | TCP 3001 |
-| **BACKEND B** | `backend-b.team1.test` | `Pending` | `255.255.224.0` / `10.7.0.1` | `en0` | `Pending` | TCP 3002, UDP 53 |
+| **BACKEND B** | `backend-b.team1.test` | `10.7.22.224` | `255.255.224.0` / `10.7.0.1` | `en0` | `10:9f:41:b1:7a:fb` | TCP 3002, UDP 53 |
 
 ---
 
