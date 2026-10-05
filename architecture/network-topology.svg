@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 560" width="100%" height="100%" style="background:#0f172a; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+  <defs>
+    <linearGradient id="lanGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+
+  <!-- Title Header -->
+  <text x="450" y="40" text-anchor="middle" fill="#f8fafc" font-size="22" font-weight="700">Team 1 — Private Network Service Platform Architecture</text>
+  <text x="450" y="65" text-anchor="middle" fill="#94a3b8" font-size="13">Subnet: 10.7.0.0/19 | Gateway: 10.7.0.1 | Reserved Namespace: *.team1.test</text>
+
+  <!-- Main LAN Bus -->
+  <rect x="80" y="110" width="740" height="12" rx="6" fill="url(#lanGrad)" filter="url(#shadow)"/>
+  <text x="450" y="102" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="600" letter-spacing="1">PRIVATE WI-FI / LAN SEGMENT (10.7.0.0/19)</text>
+
+  <!-- Connection Lines from Bus to Nodes -->
+  <path d="M 180 122 L 180 180" stroke="#38bdf8" stroke-width="3" stroke-dasharray="4,4"/>
+  <path d="M 450 122 L 450 180" stroke="#818cf8" stroke-width="3"/>
+  <path d="M 720 122 L 720 180" stroke="#38bdf8" stroke-width="3" stroke-dasharray="4,4"/>
+  
+  <!-- Mac 1: DNS Server -->
+  <g transform="translate(80, 180)">
+    <rect width="200" height="170" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2" filter="url(#shadow)"/>
+    <rect width="200" height="35" rx="10" fill="#0284c7"/>
+    <text x="100" y="23" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="bold">MAC 1: Private DNS</text>
+    
+    <text x="15" y="60" fill="#94a3b8" font-size="12">IP: <tspan fill="#38bdf8" font-weight="bold">10.7.21.208</tspan></text>
+    <text x="15" y="82" fill="#94a3b8" font-size="12">Daemon: <tspan fill="#f8fafc">dnsmasq</tspan></text>
+    <text x="15" y="104" fill="#94a3b8" font-size="12">Port: <tspan fill="#f8fafc">53 (UDP/TCP)</tspan></text>
+    <text x="15" y="126" fill="#94a3b8" font-size="11">Domain Resolution:</text>
+    <text x="15" y="145" fill="#a5f3fc" font-size="11">app.team1.test → 10.7.28.232</text>
+  </g>
+
+  <!-- Mac 2: Edge / Load Balancer -->
+  <g transform="translate(350, 180)">
+    <rect width="200" height="170" rx="10" fill="#1e293b" stroke="#818cf8" stroke-width="2" filter="url(#shadow)"/>
+    <rect width="200" height="35" rx="10" fill="#4f46e5"/>
+    <text x="100" y="23" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="bold">MAC 2: Edge &amp; LB</text>
+    
+    <text x="15" y="60" fill="#94a3b8" font-size="12">IP: <tspan fill="#818cf8" font-weight="bold">10.7.28.232</tspan></text>
+    <text x="15" y="82" fill="#94a3b8" font-size="12">Server: <tspan fill="#f8fafc">Nginx Reverse Proxy</tspan></text>
+    <text x="15" y="104" fill="#94a3b8" font-size="12">HTTP / HTTPS: <tspan fill="#f8fafc">8080 / 8443</tspan></text>
+    <text x="15" y="126" fill="#94a3b8" font-size="12">TLS: <tspan fill="#34d399">Terminated at Edge</tspan></text>
+    <text x="15" y="148" fill="#94a3b8" font-size="11">Pool: <tspan fill="#f8fafc">Round-Robin (A &amp; B)</tspan></text>
+  </g>
+
+  <!-- Mac 3: Backend Instance A -->
+  <g transform="translate(620, 180)">
+    <rect width="200" height="170" rx="10" fill="#1e293b" stroke="#38bdf8" stroke-width="2" filter="url(#shadow)"/>
+    <rect width="200" height="35" rx="10" fill="#0284c7"/>
+    <text x="100" y="23" text-anchor="middle" fill="#ffffff" font-size="14" font-weight="bold">MAC 3: Backend A</text>
+    
+    <text x="15" y="60" fill="#94a3b8" font-size="12">IP: <tspan fill="#38bdf8" font-weight="bold">10.7.9.142</tspan></text>
+    <text x="15" y="82" fill="#94a3b8" font-size="12">Service: <tspan fill="#f8fafc">Python REST API</tspan></text>
+    <text x="15" y="104" fill="#94a3b8" font-size="12">Port: <tspan fill="#f8fafc">3001 (0.0.0.0)</tspan></text>
+    <text x="15" y="126" fill="#94a3b8" font-size="12">Header: <tspan fill="#a5f3fc">X-Backend: Backend-A</tspan></text>
+    <text x="15" y="148" fill="#94a3b8" font-size="11">Cache-Control: <tspan fill="#f8fafc">max-age=60</tspan></text>
+  </g>
+
+  <!-- Downward Proxy Lines from Edge to Backends -->
+  <path d="M 550 265 L 620 265" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3,3"/>
+  <text x="585" y="258" text-anchor="middle" fill="#f59e0b" font-size="10">Proxy</text>
+
+  <path d="M 450 350 L 450 390 L 720 390 L 720 420" stroke="#f59e0b" stroke-width="2" stroke-dasharray="3,3"/>
+  <text x="585" y="383" text-anchor="middle" fill="#f59e0b" font-size="10">Proxy Upstream</text>
+
+  <!-- Mac 4: Backend Instance B -->
+  <g transform="translate(620, 400)">
+    <rect width="200" height="140" rx="10" fill="#1e293b" stroke="#10b981" stroke-width="2" filter="url(#shadow)"/>
+    <rect width="200" height="30" rx="10" fill="#059669"/>
+    <text x="100" y="20" text-anchor="middle" fill="#ffffff" font-size="13" font-weight="bold">MAC 4: Backend B</text>
+    
+    <text x="15" y="52" fill="#94a3b8" font-size="11">IP: <tspan fill="#34d399" font-weight="bold">10.7.22.224</tspan></text>
+    <text x="15" y="72" fill="#94a3b8" font-size="11">Service: <tspan fill="#f8fafc">Python REST API (Port 3002)</tspan></text>
+    <text x="15" y="92" fill="#94a3b8" font-size="11">Header: <tspan fill="#a7f3d0">X-Backend: Backend-B</tspan></text>
+    <text x="15" y="112" fill="#94a3b8" font-size="11">Cache-Control: <tspan fill="#f8fafc">max-age=60</tspan></text>
+  </g>
+
+  <!-- Member 5 Role Box -->
+  <g transform="translate(80, 400)">
+    <rect width="470" height="140" rx="10" fill="#1e293b" stroke="#64748b" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect width="470" height="30" rx="10" fill="#334155"/>
+    <text x="235" y="20" text-anchor="middle" fill="#f1f5f9" font-size="13" font-weight="bold">Team Responsibility &amp; Observability Matrix</text>
+    <text x="20" y="55" fill="#94a3b8" font-size="12">• Infrastructure: <tspan fill="#f8fafc">4 Dedicated macOS Laptops (DNS, Edge, Backend A, Backend B)</tspan></text>
+    <text x="20" y="78" fill="#94a3b8" font-size="12">• Member 5 Role: <tspan fill="#f8fafc">Wireshark Protocol Capture, Live Observability &amp; Presentation</tspan></text>
+    <text x="20" y="101" fill="#94a3b8" font-size="12">• Evidence Captured: <tspan fill="#38bdf8">DNS Query/Answer, TCP 3-Way Handshake, TLS Handshake, HTTP Headers</tspan></text>
+  </g>
+</svg>
