@@ -1,5 +1,5 @@
 # Team 1 project records (served by dnsmasq with TTL = local-ttl = 30 s)
-# Last changed 2026-11-23 19:06:45 by dns.sh point primary (was 10.7.28.232)
+# Last changed 2026-11-23 19:06:45 by dns.sh point primary (was 10.7.24.242)
 # Change with:  ./phase2/scripts/dns.sh point <primary|standby|IP>
 127.0.0.2  app.team1.test
 127.0.0.2  api.team1.test

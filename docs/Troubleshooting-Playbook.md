@@ -12,13 +12,13 @@ first one that fails:
 
 | # | Layer | Question | Manual command (client Mac) | Good result |
 | :-- | :-- | :-- | :-- | :-- |
-| 1 | DNS | Does the name resolve, to the **right** IP? | `dig app.team1.test` · `dig @10.7.21.208 app.team1.test` · `dig @10.7.9.142 app.team1.test` · `dscacheutil -q host -a name app.team1.test` | `10.7.28.232` everywhere |
-| 2 | IP | Is that host reachable? | `ping -c 3 10.7.28.232` | replies (no reply alone isn't proof: ICMP can be blocked) |
-| 3 | TCP | Does the port accept a connection? | `nc -vz -G 3 10.7.28.232 8443` | `succeeded` |
-| 4 | TLS | Valid, trusted cert for this name? | `openssl s_client -connect 10.7.28.232:8443 -servername app.team1.test -CAfile tls/team1-ca.crt </dev/null \| grep -E 'Verify return\|subject\|issuer'` | `Verify return code: 0 (ok)` |
+| 1 | DNS | Does the name resolve, to the **right** IP? | `dig app.team1.test` · `dig @10.7.11.54 app.team1.test` · `dig @10.7.11.60 app.team1.test` · `dscacheutil -q host -a name app.team1.test` | `10.7.24.242` everywhere |
+| 2 | IP | Is that host reachable? | `ping -c 3 10.7.24.242` | replies (no reply alone isn't proof: ICMP can be blocked) |
+| 3 | TCP | Does the port accept a connection? | `nc -vz -G 3 10.7.24.242 8443` | `succeeded` |
+| 4 | TLS | Valid, trusted cert for this name? | `openssl s_client -connect 10.7.24.242:8443 -servername app.team1.test -CAfile tls/team1-ca.crt </dev/null \| grep -E 'Verify return\|subject\|issuer'` | `Verify return code: 0 (ok)` |
 | 5 | HTTP edge | Is nginx itself OK? | `curl -i https://app.team1.test:8443/edge/health` | 200, `X-Edge` |
 | 6 | HTTP app | Do the backends answer through it? | `curl -i https://app.team1.test:8443/api/status` (×4) | 200, A and B |
-| 7 | Edge → backend | (on Mac 2) Can the edge reach each backend? | `curl -m 3 http://10.7.9.142:3001/health` · `curl -m 3 http://10.7.22.224:3002/health` · `tail /tmp/team1-edge-primary-error.log` | 200 / 200 |
+| 7 | Edge → backend | (on Mac 2) Can the edge reach each backend? | `curl -m 3 http://10.7.11.60:3001/health` · `curl -m 3 http://10.7.8.22:3002/health` · `tail /tmp/team1-edge-primary-error.log` | 200 / 200 |
 
 `python3 phase2/scripts/diagnose.py` (add `--backends` on Mac 2) runs layers
 1–7 in one go and names the first failing layer. Use it to find the fault
@@ -51,14 +51,14 @@ they did. Restore after each drill (`phase2/README.md` §8).
 
 | # | Fault to inject | How | What you'll see | First failing layer |
 | :-- | :-- | :-- | :-- | :-- |
-| 1 | Wrong DNS record | Mac 1+3: `dns.sh point 10.7.28.99` | `diagnose`: "NOT a known edge"; curl times out | DNS |
+| 1 | Wrong DNS record | Mac 1+3: `dns.sh point 10.7.24.99` | `diagnose`: "NOT a known edge"; curl times out | DNS |
 | 2 | DNS servers out of sync | Mac 1 only: `dns.sh point standby` | some clients reach primary, some standby; diagnose warns "DISAGREE" | DNS |
 | 3 | Both resolvers down | `dns.sh stop` on Mac 1 and Mac 3, flush client | `Could not resolve host` | DNS |
 | 4 | nginx stopped | Mac 2: `edge.sh stop primary` | `(7) Connection refused` | TCP |
 | 5 | Edge port changed | Mac 2: change `listen 8443` → `8444`, `edge.sh reload primary` | `(7) Connection refused` on 8443; `nc -vz … 8444` works | TCP |
 | 6 | Wrong cert on edge | point `ssl_certificate` at a cert for another name (make one with `openssl req -x509 -subj /CN=wrong.test …`) | `(60) SSL: no alternative certificate subject name matches` | TLS |
 | 7 | Client doesn't trust CA | on a client: Keychain Access → Team1-Root-CA → Never Trust | `(60) unable to get local issuer certificate` | TLS |
-| 8 | Backend bound to localhost | Mac 3: `BIND=127.0.0.1 python3 backend-a/server.py` | client: only Backend-B; Mac 2 `curl 10.7.9.142:3001` refused | Edge → backend |
+| 8 | Backend bound to localhost | Mac 3: `BIND=127.0.0.1 python3 backend-a/server.py` | client: only Backend-B; Mac 2 `curl 10.7.11.60:3001` refused | Edge → backend |
 | 9 | pf blocks the edge | Mac 3: edit `team1_edges` to a wrong IP in the rendered ruleset and `sudo pfctl -f` it | only Backend-B; from Mac 2 `curl` **times out** (not refused) | Edge → backend |
 | 10 | Wrong upstream port | Mac 2: change `:3001` → `:3005` in upstream, reload | only Backend-B; error log `connect() failed (61)` to :3005 | Edge → backend (config) |
 | 11 | Both backends down | Ctrl+C both | JSON 502 from edge, `/edge/health` still 200 | HTTP upstream |

@@ -26,7 +26,7 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 BACKEND_ID = "A"
 PORT = int(os.environ.get("PORT", "3001"))
 BIND = os.environ.get("BIND", "0.0.0.0")          # LAN-accessible, NOT 127.0.0.1
-SERVER_IP = os.environ.get("SERVER_IP", "10.7.9.142")
+SERVER_IP = os.environ.get("SERVER_IP", "10.7.11.60")
 STARTED_AT = time.time()
 
 # This payload MUST be byte-identical on Backend A and Backend B.

@@ -23,13 +23,13 @@ Phase 1 items that were pending are closed by Phase 2: the **304** demo
 
 | # | Test | Expected | Observed | Evidence file |
 | :-- | :-- | :-- | :-- | :-- |
-| A1 | Stop dnsmasq on Mac 1, resolve from Mac 4 | name still resolves via 10.7.9.142 | ⟨…⟩ | ⟨…⟩ |
-| A2 | `dig @10.7.21.208` while stopped | connection refused (ICMP port unreachable) | ⟨…⟩ | ⟨…⟩ |
+| A1 | Stop dnsmasq on Mac 1, resolve from Mac 4 | name still resolves via 10.7.11.60 | ⟨…⟩ | ⟨…⟩ |
+| A2 | `dig @10.7.11.54` while stopped | connection refused (ICMP port unreachable) | ⟨…⟩ | ⟨…⟩ |
 | B1 | `dig` TTL field | 30 | ⟨…⟩ | ⟨…⟩ |
 | B2 | Record changed at ⟨time⟩; client switched at ⟨time⟩ | ≤ 30 s later | ⟨Δ = … s⟩ | ⟨…⟩ |
 | B3 | Flush client cache after change | immediate switch | ⟨…⟩ | ⟨…⟩ |
-| C1 | Mac 2 → 10.7.9.142:3001 | connects | ⟨…⟩ | ⟨…⟩ |
-| C2 | Mac 1 → 10.7.9.142:3001 / 10.7.22.224:3002 | timeout | ⟨…⟩ | ⟨…⟩ |
+| C1 | Mac 2 → 10.7.11.60:3001 | connects | ⟨…⟩ | ⟨…⟩ |
+| C2 | Mac 1 → 10.7.11.60:3001 / 10.7.8.22:3002 | timeout | ⟨…⟩ | ⟨…⟩ |
 | C3 | Service via edge with pf active | 200, both backends | ⟨…⟩ | ⟨…⟩ |
 | C4 | Rollback restores direct access | connects | ⟨…⟩ | ⟨…⟩ |
 | D1 | Backend A stopped during `probe.sh` | 0 failed requests, 1 retried, then only B | ⟨n requests, … failed⟩ | ⟨…⟩ |

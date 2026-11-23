@@ -22,7 +22,7 @@ repo root (`cd CN_HashNet`).
 
 ```
                          ┌─────────────── private LAN 10.7.0.0/19 ───────────────┐
- Mac 1 10.7.21.208       Mac 2 10.7.28.232        Mac 3 10.7.9.142          Mac 4 10.7.22.224
+ Mac 1 10.7.11.54       Mac 2 10.7.24.242        Mac 3 10.7.11.60          Mac 4 10.7.8.22
  ─────────────────       ─────────────────        ────────────────          ─────────────────
  PRIMARY DNS :53         PRIMARY EDGE             Backend A :3001           Backend B :3002
  test client             nginx :8080/:8443        BACKUP DNS :53  (A)       STANDBY EDGE :8443 (E)
@@ -87,7 +87,7 @@ older nginx, delete that line and write `listen 8443 ssl http2;` instead.
 
 **Client Macs (Mac 1 and Mac 4)**
 ```bash
-./phase2/scripts/client-dns.sh setup   # DNS = 10.7.21.208, then 10.7.9.142
+./phase2/scripts/client-dns.sh setup   # DNS = 10.7.11.54, then 10.7.11.60
 ./phase2/scripts/client-dns.sh show
 ```
 
@@ -107,16 +107,16 @@ when the first doesn't answer.
 
 | Step | Where | Command | Expected |
 | :-- | :-- | :-- | :-- |
-| 1 | Mac 4 | `dig @10.7.21.208 app.team1.test +short` and `dig @10.7.9.142 app.team1.test +short` | both: `10.7.28.232` |
+| 1 | Mac 4 | `dig @10.7.11.54 app.team1.test +short` and `dig @10.7.11.60 app.team1.test +short` | both: `10.7.24.242` |
 | 2 | Mac 4 | start Wireshark, filter `dns` | |
 | 3 | Mac 1 | `./phase2/scripts/dns.sh stop` | "dnsmasq stopped" |
-| 4 | Mac 4 | `dig @10.7.21.208 app.team1.test` | `connection refused` (host up, port 53 closed) |
+| 4 | Mac 4 | `dig @10.7.11.54 app.team1.test` | `connection refused` (host up, port 53 closed) |
 | 5 | Mac 4 | `./phase2/scripts/client-dns.sh flush` then `./phase2/scripts/probe.sh -n 4` | still 200 — the name resolved through Mac 3 |
 | 6 | Mac 4 | `python3 phase2/scripts/diagnose.py` | primary DNS **WARN refused**, backup PASS, all layers OK |
 | 7 | Mac 1 | `./phase2/scripts/dns.sh start` | restore |
 
-**Evidence.** Wireshark: query → 10.7.21.208, *ICMP Destination unreachable (Port unreachable)*,
-same query → 10.7.9.142, answer. Plus Mac 3's dnsmasq log showing the query.
+**Evidence.** Wireshark: query → 10.7.11.54, *ICMP Destination unreachable (Port unreachable)*,
+same query → 10.7.11.60, answer. Plus Mac 3's dnsmasq log showing the query.
 
 **DNS failure vs. application failure.**
 DNS down = `curl: (6) Could not resolve host`. Nothing reaches the edge, and
@@ -140,7 +140,7 @@ Use `curl`/`probe.sh` for this demo. Browsers keep their own DNS cache
 | :-- | :-- | :-- |
 | 1 | Mac 4 (window 1) | `./phase2/scripts/ttl-watch.sh` |
 | 2 | Mac 4 (window 2) | `./phase2/scripts/probe.sh -i 2 -p /edge/health` (fills the cache) |
-| 3 | Mac 1 **and** Mac 3 | `./phase2/scripts/dns.sh point standby` *(or any test IP, e.g. `dns.sh point 10.7.22.224`)* |
+| 3 | Mac 1 **and** Mac 3 | `./phase2/scripts/dns.sh point standby` *(or any test IP, e.g. `dns.sh point 10.7.8.22`)* |
 | 4 | watch | servers flip at once. `client-cache` keeps the **old** IP for up to 30 s, then flips |
 | 5 | Mac 1 + Mac 3 | `./phase2/scripts/dns.sh point primary` |
 | 6 | Mac 4 | immediately `./phase2/scripts/client-dns.sh flush` → `client-cache` flips with no wait |
@@ -172,9 +172,9 @@ everyone else.
 
 | Test | From | Command | Expected |
 | :-- | :-- | :-- | :-- |
-| edge → backend | Mac 2 | `nc -vz -G 3 10.7.9.142 3001` / `curl http://10.7.9.142:3001/health` | succeeded / 200 |
-| client → backend | Mac 1 | `nc -vz -G 3 10.7.9.142 3001` | **times out** (dropped, no RST) |
-| client → backend | Mac 1 | `nc -vz -G 3 10.7.22.224 3002` | **times out** |
+| edge → backend | Mac 2 | `nc -vz -G 3 10.7.11.60 3001` / `curl http://10.7.11.60:3001/health` | succeeded / 200 |
+| client → backend | Mac 1 | `nc -vz -G 3 10.7.11.60 3001` | **times out** (dropped, no RST) |
+| client → backend | Mac 1 | `nc -vz -G 3 10.7.8.22 3002` | **times out** |
 | client → service | Mac 1 | `./phase2/scripts/probe.sh -n 4` | 200, both backends — the path through the edge still works |
 | counters | Mac 3 | `./phase2/scripts/firewall.sh status` | packet counts on the `block` rule went up |
 
@@ -209,7 +209,7 @@ per app, not per source IP or port. That is why this uses pf.
 | :-- | :-- | :-- | :-- |
 | 1 | Mac 2 | `./phase2/scripts/edge.sh logs primary` | |
 | 2 | Mac 1 | `./phase2/scripts/probe.sh` | A, B, A, B … |
-| 3 | Mac 3 | **Ctrl+C** Backend A | next request: `tried=[10.7.9.142:3001, 10.7.22.224:3002]` with **200**, then only Backend-B. **No failures** |
+| 3 | Mac 3 | **Ctrl+C** Backend A | next request: `tried=[10.7.11.60:3001, 10.7.8.22:3002]` with **200**, then only Backend-B. **No failures** |
 | 4 | Mac 2 log | | `connect() failed (61: Connection refused)` + `upstream server temporarily disabled` |
 | 5 | Mac 3 | `python3 backend-a/server.py` | within ≤ 10 s, A reappears and the rotation resumes |
 | 6 | Mac 1 | Ctrl+C on probe | summary: `HTTP-5xx=0 failed=0` |
@@ -219,7 +219,7 @@ A killed at 19:06:03 → one retried request, 23 requests served by B, zero erro
 A restarted at 19:06:11 → back in rotation at 19:06:15.
 
 **Single point of failure.** The edge, Mac 2. If nginx or Mac 2 dies, DNS
-still hands out 10.7.28.232 and every client fails at the TCP layer. To
+still hands out 10.7.24.242 and every client fails at the TCP layer. To
 remove it you need two or more edges plus a way to move traffic between them:
 
 * **DNS-based** (Ext E): simple, but limited by TTL and needs someone (or a
@@ -239,14 +239,14 @@ single Wi-Fi access point/router**.
 ```bash
 # Mac 4 — bring up the standby edge (same config, same cert)
 ./phase2/scripts/edge.sh start standby
-curl https://app.team1.test:8443/edge/health --resolve app.team1.test:8443:10.7.22.224   # X-Edge: standby-mac4
+curl https://app.team1.test:8443/edge/health --resolve app.team1.test:8443:10.7.8.22   # X-Edge: standby-mac4
 # If Ext C rules are loaded, let the standby reach Backend A as well:
 #   Mac 3: ./phase2/scripts/firewall.sh apply A --with-standby
 ```
 
 | Step | Where | Command | Expected |
 | :-- | :-- | :-- | :-- |
-| 1 | Mac 1 (client) | `./phase2/scripts/probe.sh -i 1` | `edge=10.7.28.232 (primary-mac2)` |
+| 1 | Mac 1 (client) | `./phase2/scripts/probe.sh -i 1` | `edge=10.7.24.242 (primary-mac2)` |
 | 2 | Mac 4 (2nd client) | `./phase2/scripts/ttl-watch.sh` | |
 | 3 | Mac 1 + Mac 3 | `./phase2/scripts/dns.sh point standby` (note the time) | |
 | 4 | probe | still `primary-mac2` for up to 30 s (cached) → `==== edge address changed ====` → `standby-mac4` | |
