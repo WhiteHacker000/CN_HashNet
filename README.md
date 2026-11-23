@@ -25,7 +25,7 @@ Phase 2 extends the Phase 1 system without rebuilding it. **Runbook: [`phase2/RE
 | E — Edge migration | standby nginx on Mac 4 + DNS cutover; `X-Edge` header shows which edge answered |
 | F — Troubleshooting | `phase2/scripts/diagnose.py` + [`docs/Troubleshooting-Playbook.md`](docs/Troubleshooting-Playbook.md) |
 
-Report: [`docs/Phase2-Report.md`](docs/Phase2-Report.md) · Evidence checklist: [`evidence/phase2/README.md`](evidence/phase2/README.md)
+Report: [`docs/Phase2-Report.md`](docs/Phase2-Report.md) ([Word](docs/Phase2-Report.docx)) · Slides: [`docs/Phase2-Presentation.pptx`](docs/Phase2-Presentation.pptx) · Evidence checklist: [`evidence/phase2/README.md`](evidence/phase2/README.md)
 
 Phase 2 also closes the two Phase 1 items that were pending: **304 Not Modified** (`/api/data`, same ETag on both backends) and **one backend stopped** (Extension D).
 
