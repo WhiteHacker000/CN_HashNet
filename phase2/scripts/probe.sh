@@ -58,10 +58,10 @@ while :; do
     : > "$HDR"
     rc=0
     out="$(curl -sS -o /dev/null -D "$HDR" --max-time 6 \
-        -w '%{http_code} %{remote_ip} %{time_total}' "$URL" 2>"$ERR")" || rc=$?
+        -w '%{http_code} x%{remote_ip} %{time_total}' "$URL" 2>"$ERR")" || rc=$?
     # shellcheck disable=SC2086  # intentional word split into code/ip/time
     set -- $out
-    code="${1:-000}"; ip="${2:-}"; t="${3:-?}"
+    code="${1:-000}"; ip="${2:-x}"; ip="${ip#x}"; t="${3:-?}"
 
     if [ -n "$ip" ] && [ -n "$last_ip" ] && [ "$ip" != "$last_ip" ]; then
         printf '%s======== edge address changed: %s -> %s ========%s\n' "$C_YEL" "$last_ip" "$ip" "$C_OFF"
