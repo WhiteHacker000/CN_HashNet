@@ -271,7 +271,15 @@ eight practice faults to run on each other before the evaluation.
 
 ---
 
-## 8. Reset to normal after any demo
+## 8. Known issues on our Macs (found 2026-11-24)
+
+| Mac | Issue | Fix |
+| :-- | :-- | :-- |
+| Tejas (Mac 3) | `/etc/pf.conf` loads an old anchor `team1` (another project) that lets only `10.7.1.19` reach 3001/3002, so the edge times out on Backend A. It returns after every reboot and after `firewall.sh rollback`. | `sudo pfctl -a team1 -F rules` |
+| Kushal (Mac 1) | Homebrew's dnsmasq service (Phase 1 config, root) can come back and answer the old record `10.7.28.232` TTL 0. | `sudo brew services stop dnsmasq` |
+| All | Wi-Fi IPs change between days. | update `phase2/team.env`, `nginx/phase2/edge-*.conf` (upstream), `dns/phase2/team1.hosts` |
+
+## 9. Reset to normal after any demo
 
 ```bash
 Mac 1, Mac 3:  ./phase2/scripts/dns.sh point primary

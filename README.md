@@ -256,5 +256,5 @@ The team consists of 5 members managing 4 infrastructure laptops:
 - [x] Client connects over HTTPS (`https://app.team1.test:8443`) without `-k`
 - [x] Load balancer serves responses alternately from Backend A and Backend B
 - [x] Wireshark captures prove DNS, TCP 3-way handshake, TLS handshake, and HTTP headers
-- [ ] Phase 1 D3 failover — implemented in Phase 2 Extension D (passive health checks + retry); tick after the live demo
+- [x] Phase 1 D3 failover — demonstrated in Phase 2 Extension D on 2026-11-24 (71 requests, 0 errors with Backend A down)
 - [ ] 304 Not Modified — implemented: `/api/data` returns an ETag shared by both backends; tick after capturing `X1_304_not_modified.png`
