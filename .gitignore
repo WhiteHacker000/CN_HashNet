@@ -51,3 +51,9 @@ secrets.json
 *.swp
 *.swo
 *~
+
+# Phase 2 — edge certificates and local firewall backups stay on each Mac
+nginx/phase2/certs/*
+!nginx/phase2/certs/README.md
+firewall/backups/
+firewall/active-ruleset.pf.conf

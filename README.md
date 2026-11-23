@@ -1,5 +1,5 @@
 # Private Network Service Platform — Team 1
-**Computer Networks Course Project | Phase 1 Submission**
+**Computer Networks Course Project | Phase 1 + Phase 2**
 
 ---
 
@@ -9,6 +9,25 @@ The **Private Network Service Platform** is a two-phase, fully local networking 
 A client request resolves a private domain (`app.team1.test`) through a dedicated DNS server, establishes an encrypted HTTPS connection terminated at an Nginx edge reverse proxy, and is dynamically load balanced across two independent Python HTTP backend instances on a physical private local area network (LAN).
 
 > **Core Principle**: *The application stays simple — the network is the project.*
+
+---
+
+## Phase 2 — Harden, Recover, Troubleshoot
+
+Phase 2 extends the Phase 1 system without rebuilding it. **Runbook: [`phase2/README.md`](phase2/README.md)**
+
+| Ext. | Implemented as |
+| :-- | :-- |
+| A — Backup DNS | identical dnsmasq on Mac 3 (`dns/phase2/`); clients use Mac 1 then Mac 3 |
+| B — TTL & record change | TTL 30 s, records in `dns/phase2/team1.hosts`, live change with `dns.sh point`, `ttl-watch.sh` |
+| C — Service isolation | pf rules on Mac 3/Mac 4 (`firewall/`), backend ports accept only the edge; scripted rollback |
+| D — HA failover | nginx passive health checks + retry on the other backend (`nginx/phase2/`) |
+| E — Edge migration | standby nginx on Mac 4 + DNS cutover; `X-Edge` header shows which edge answered |
+| F — Troubleshooting | `phase2/scripts/diagnose.py` + [`docs/Troubleshooting-Playbook.md`](docs/Troubleshooting-Playbook.md) |
+
+Report: [`docs/Phase2-Report.md`](docs/Phase2-Report.md) · Evidence checklist: [`evidence/phase2/README.md`](evidence/phase2/README.md)
+
+Phase 2 also closes the two Phase 1 items that were pending: **304 Not Modified** (`/api/data`, same ETag on both backends) and **one backend stopped** (Extension D).
 
 ---
 
@@ -237,5 +256,5 @@ The team consists of 5 members managing 4 infrastructure laptops:
 - [x] Client connects over HTTPS (`https://app.team1.test:8443`) without `-k`
 - [x] Load balancer serves responses alternately from Backend A and Backend B
 - [x] Wireshark captures prove DNS, TCP 3-way handshake, TLS handshake, and HTTP headers
-- [ ] Phase 1 D3 failover behavior is pending final verification
-- [ ] Explicit 304 Not Modified / browser cache-hit demonstration is pending verification
+- [ ] Phase 1 D3 failover — implemented in Phase 2 Extension D (passive health checks + retry); tick after the live demo
+- [ ] 304 Not Modified — implemented: `/api/data` returns an ETag shared by both backends; tick after capturing `X1_304_not_modified.png`

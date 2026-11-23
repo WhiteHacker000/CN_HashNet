@@ -15,3 +15,17 @@
 - **Default Gateway**: `10.7.0.1`
 - **DNS Server**: `10.7.21.208`
 - **Private Domain Namespace**: `.test` (RFC 6761 reserved)
+
+---
+
+## Phase 2 additions
+
+| Machine | IP | New Phase 2 role | Service | Port(s) |
+| :--- | :--- | :--- | :--- | :--- |
+| **Mac 1** | `10.7.21.208` | Primary DNS (now TTL 30 s, live-reloadable records) | `dnsmasq` | `53` |
+| **Mac 2** | `10.7.28.232` | Primary edge + passive health checks / failover | `nginx` (`edge-primary.conf`) | `8080`, `8443` |
+| **Mac 3** | `10.7.9.142` | **Backup DNS** (Ext A) · pf isolation of `3001` (Ext C) | `dnsmasq`, `pf` | `53`, `3001` |
+| **Mac 4** | `10.7.22.224` | **Standby edge** (Ext E) · pf isolation of `3002` (Ext C) | `nginx` (`edge-standby.conf`), `pf` | `8080`, `8443`, `3002` |
+
+- **Client DNS servers**: `10.7.21.208` (primary), `10.7.9.142` (backup)
+- **Allowed to reach backend ports**: `10.7.28.232` only (plus `10.7.22.224` during edge cutover)
